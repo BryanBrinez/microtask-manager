@@ -4,18 +4,12 @@
 [submodule "client-gateway"]
 	path = client-gateway
 	url = https://github.com/BryanBrinez/client-gateway.git
-[submodule "project-ms"]
-	path = project-ms
-	url = https://github.com/BryanBrinez/project-ms.git
 [submodule "users-ms"]
 	path = users-ms
 	url = https://github.com/BryanBrinez/users-ms.git
-[submodule "members-ms"]
-	path = members-ms
-	url = https://github.com/BryanBrinez/members-ms.git
+[submodule "team-ms"]
+	path = team-ms
+	url = https://github.com/BryanBrinez/team-ms.git
 [submodule "task-ms"]
 	path = task-ms
 	url = https://github.com/BryanBrinez/task-ms.git
-[submodule "task-chat-ms"]
-	path = task-chat-ms
-	url = https://github.com/BryanBrinez/task-chat-ms.git
