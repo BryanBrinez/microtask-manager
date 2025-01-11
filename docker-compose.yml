@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+  nats-server:
+    image: nats:latest
+    ports:
+      - "8222:8222"
+
+  microtask-manager-db:
+    container_name: microtask_manager_db
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=microtask_manager
+
+  client-gateway:
+    build: ./client-gateway
+    volumes:
+      - ./client-gateway:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+
+  users-ms:
+    build: ./users-ms
+    volumes:
+      - ./users-ms:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    restart: always
+    environment:
+      - PORT=3004
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=postgresql://postgres:123456@microtask-manager-db:5432/microtask_manager?schema=users
+    depends_on:
+      - microtask-manager-db
+
+  auth-ms:
+    build: ./auth-ms
+    volumes:
+      - ./auth-ms:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    restart: always
+    environment:
+      - PORT=3001
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=mongodb+srv://datos-tallerII:VElX9GSfcvT6OFWS@cluster1.hlhfqrr.mongodb.net/app-users?retryWrites=true&w=majority
+      - JWT_SECRET=Muysecret
+
+  task-ms:
+    build: ./task-ms
+    volumes:
+      - ./task-ms:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    restart: always
+    environment:
+      - PORT=3002
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=postgresql://postgres:123456@microtask-manager-db:5432/microtask_manager?schema=task
+    depends_on:
+      - microtask-manager-db
+
+  team-ms:
+    build: ./team-ms
+    volumes:
+      - ./team-ms:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    restart: always
+    environment:
+      - PORT=3003
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=postgresql://postgres:123456@microtask-manager-db:5432/microtask_manager?schema=team
+    depends_on:
+      - microtask-manager-db
